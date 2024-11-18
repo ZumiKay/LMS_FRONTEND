@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import "../../style/style.css";
 import { LoginType } from "../../types/user.type";
 import { ApiRequest } from "../../utilities/helper";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { renderToStaticMarkup } from "react-dom/server";
 import ReactCodeInput from "react-code-input";
 import Logo1 from "../../Image/Logo1.png";
@@ -14,7 +14,7 @@ import { useShowToast } from "../../config/customHook";
 
 const Login = () => {
   const [loading, setloading] = useState(false);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [reset, setreset] = useState(false);
   const [isrequest, setisrequest] = useState(false);
   const [isChange, setisChange] = useState(false);
@@ -88,8 +88,8 @@ const Login = () => {
     }
 
     if (!reset) {
-      // navigate("/profile", { replace: true });
-      // window.location.reload();
+      navigate("/profile", { replace: true });
+      window.location.reload();
     } else {
       setisrequest(true);
       if (isrequest) {
