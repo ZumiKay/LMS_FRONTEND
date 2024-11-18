@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import "../../style/style.css";
 import { LoginType } from "../../types/user.type";
 import { ApiRequest } from "../../utilities/helper";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { renderToStaticMarkup } from "react-dom/server";
 import ReactCodeInput from "react-code-input";
 import Logo1 from "../../Image/Logo1.png";
@@ -14,26 +14,32 @@ import { useShowToast } from "../../config/customHook";
 
 const Login = () => {
   const [loading, setloading] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [reset, setreset] = useState(false);
   const [isrequest, setisrequest] = useState(false);
   const [isChange, setisChange] = useState(false);
+  const [data, setdata] = useState<LoginType>({
+    code: "",
+    email: "",
+    password: "",
+    confirmpassword: "",
+  });
   const { ErrorToast } = useShowToast();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setdata((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formdata = new FormData(e.currentTarget);
-    const formjson = Object.fromEntries(
-      formdata.entries()
-    ) as unknown as LoginType;
-
     if (isChange) {
-      if (!formjson.password || !formjson.confirmpassword) {
+      if (!data.password || !data.confirmpassword) {
         ErrorToast("Missing Requried Field");
         return;
       }
-      if (formjson.password !== formjson.confirmpassword) {
+      if (data.password !== data.confirmpassword) {
         ErrorToast("Invalid Confirm Password");
         return;
       }
@@ -44,14 +50,15 @@ const Login = () => {
       : !reset
       ? "/user/login"
       : "/user/forgotpassword";
-    const data = {
-      email: formjson.email,
-      password: formjson.password,
+
+    const submitdata = {
+      email: data.email,
+      password: data.password,
       html: renderToStaticMarkup(
         <EmailTemplate label="Your Reset Password Link" type="reset" />
       ),
       type: isrequest ? "Verify" : "Request",
-      ...(isrequest ? { code: formjson.code } : {}),
+      ...(isrequest ? { code: data.code } : {}),
     };
 
     setloading(true);
@@ -60,17 +67,18 @@ const Login = () => {
       method: "POST",
       data: isChange
         ? {
-            password: formjson.password,
+            email: data.email,
+            password: data.password,
             type: "Change",
           }
-        : data,
+        : submitdata,
       cookies: true,
       refreshToken: false,
     });
     setloading(false);
 
     if (!request.success) {
-      ErrorToast("Error Occured");
+      ErrorToast(request.message ?? "Error Occured");
       return;
     }
 
@@ -80,8 +88,8 @@ const Login = () => {
     }
 
     if (!reset) {
-      navigate("/profile", { replace: true });
-      window.location.reload();
+      // navigate("/profile", { replace: true });
+      // window.location.reload();
     } else {
       setisrequest(true);
       if (isrequest) {
@@ -108,12 +116,14 @@ const Login = () => {
             <PasswordInput
               className="w-full"
               label="New Password"
-              name="newpassword"
+              name="password"
+              onChange={handleChange}
               required
             />
             <PasswordInput
               className="w-full"
               label="Confirm Password"
+              onChange={handleChange}
               name="confirmpassword"
               required
             />
@@ -126,6 +136,7 @@ const Login = () => {
               className="text-black"
               name="email"
               label={"Email / ID"}
+              onChange={handleChange}
               size="lg"
               required
             />
@@ -133,11 +144,19 @@ const Login = () => {
               className="w-full"
               name="password"
               label={"Password"}
+              onChange={handleChange}
               required
             />
           </>
         ) : isrequest ? (
-          <ReactCodeInput name="code" inputMode="numeric" fields={6} />
+          <ReactCodeInput
+            name="code"
+            inputMode="numeric"
+            fields={6}
+            onChange={(e) => {
+              setdata((prev) => ({ ...prev, code: e }));
+            }}
+          />
         ) : (
           <Input
             type={"text"}
@@ -145,6 +164,7 @@ const Login = () => {
             name="email"
             label={"Email / ID"}
             labelPlacement="outside"
+            onChange={handleChange}
             size="lg"
             required
           />

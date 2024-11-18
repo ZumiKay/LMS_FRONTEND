@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../../Style/style.css";
+import "../../style/style.css";
 import { ApiRequest } from "../../utilities/helper";
 import { BookStatus, BookType, CategoyType } from "../../types/book.type";
 import { useGlobalContext } from "../../types/context.type";
