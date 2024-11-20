@@ -54,7 +54,7 @@ const NavigationBar = ({ user }: { user: UserType }) => {
     setloading(true);
     const request = await ApiRequest({
       url: "/user/logout",
-      method: "GET",
+      method: "POST",
       cookies: true,
     });
     setloading(false);
