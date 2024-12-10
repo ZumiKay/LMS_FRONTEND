@@ -20,3 +20,15 @@ export function SliderLoading() {
     </div>
   );
 }
+
+export function RectangleLoading() {
+  return (
+    <div className="w-full overflow-x-auto">
+      <div className="min-w-[200px] w-fit ml-[10px] mb-[10px] h-[280px] flex flex-row gap-x-5 overflow-x-auto">
+        <Skeleton className="w-[250px] h-[200px]" />
+        <Skeleton className="w-[250px] h-[200px]" />
+        <Skeleton className="w-[250px] h-[200px]" />
+      </div>
+    </div>
+  );
+}

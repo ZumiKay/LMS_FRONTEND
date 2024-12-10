@@ -55,6 +55,9 @@ const NavigationBar = ({ user }: { user: UserType }) => {
     const request = await ApiRequest({
       url: "/user/logout",
       method: "POST",
+      data: {
+        token: localStorage.getItem(import.meta.env.VITE_REFRESHTOKEN_COOKIE),
+      },
       cookies: true,
     });
     setloading(false);
@@ -62,6 +65,8 @@ const NavigationBar = ({ user }: { user: UserType }) => {
       settoastid(toast.error("Can't Logout"));
       return;
     }
+    localStorage.removeItem(import.meta.env.VITE_REFRESHTOKEN_COOKIE);
+    localStorage.removeItem(import.meta.env.VITE_ACCESSTOKEN_COOKIE);
     toast.success("Signing Out");
     window.location.reload();
   };
@@ -168,14 +173,14 @@ const NavigationBar = ({ user }: { user: UserType }) => {
             reloaddata={() => navigate(".", { replace: true })}
           />
         )}
-        {
+        {openmenu && (
           <MenuItem
             ref={sidemenuref}
             user={user}
             open={openmenu}
             setopen={setopenmenu}
           />
-        }
+        )}
       </div>
       {ctx.loading && (
         <Progress
@@ -199,7 +204,9 @@ const NavigationBar = ({ user }: { user: UserType }) => {
           alt="svg_img"
           className="menu_btn"
         />
-        <MenuItem user={user} open={openmenu} setopen={setopenmenu} />
+        {openmenu && (
+          <MenuItem user={user} open={openmenu} setopen={setopenmenu} />
+        )}
       </div>
       <div
         className="second_sec"

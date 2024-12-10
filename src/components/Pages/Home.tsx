@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../style/style.css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import Pagination from "@mui/material/Pagination";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation, A11y } from "swiper/modules";
 import { setimage } from "../../assets/globalassets";
@@ -14,7 +13,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import Selection from "../Selection";
-import { Button } from "@nextui-org/react";
+import { Button, CircularProgress, Pagination } from "@nextui-org/react";
 import PageLoading, { SliderLoading } from "../../Loading";
 //
 
@@ -121,19 +120,27 @@ const Home = () => {
             book={filterbook}
           />
         )}
-        <div className="section_title">Latest Books</div>
+        <div className="w-full h-fit pl-1">
+          <div className="section_title">Latest Books</div>
+        </div>
         <div className="popularbook_wrapper">
+          {loading && <CircularProgress />}
           {latestbook?.map((latest, idx) => (
             <Popularbook {...latest} key={idx} />
           ))}
         </div>
-        <div className="section_title">Popular Books</div>
+        <div className="w-full h-fit pl-1">
+          <div className="section_title">Popular Books</div>
+        </div>
         <div className="popularbook_wrapper">
+          {loading && <CircularProgress />}
           {popularbook?.map((popular, idx) => (
             <Popularbook {...popular} key={idx} />
           ))}
         </div>
-        <div className="section_title">All Books</div>
+        <div className="w-full h-fit pl-1">
+          <div className="section_title">All Books</div>
+        </div>
         <AllbookContainer />
       </div>
       {change ? (
@@ -268,15 +275,13 @@ const AllbookContainer = () => {
       {books && books.length > 0 && (
         <div className="w-full h-fit flex flex-col items-center gap-y-5">
           <Pagination
-            className="pagination_container"
-            page={parseInt(currentPage)}
-            size="large"
-            count={Math.ceil(count / Number(currentShowPerPage))}
-            onChange={(_, page) => {
-              handleChange(page);
-            }}
-            showFirstButton
-            showLastButton
+            className="mt-5"
+            total={Math.ceil(count / Number(currentShowPerPage))}
+            initialPage={1}
+            page={Number(currentPage)}
+            onChange={handleChange}
+            isCompact
+            siblings={1}
           />
           <Selection
             selectdata={["6", "12", "24"].map((i) => ({

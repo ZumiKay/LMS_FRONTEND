@@ -567,7 +567,6 @@ html, body, #root {
   height: 100%;
   z-index: 1;
   color: black;
-  background-color: white;
   width: 83%;
   height: 100%;
   margin-top: 10px;
@@ -632,7 +631,6 @@ html, body, #root {
   text-align: left;
   border-bottom: 1px solid lightgray;
   width: 100%;
-  margin-left: 20px;
   border-left: 5px solid #0082c8;
   padding-left: 10px;
 }
@@ -765,36 +763,33 @@ html, body, #root {
 .allbook_container {
   width: 100%;
   height: fit-content;
-  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  align-items: center;
 }
 .allbook_container .book {
   display: grid;
   grid-template-columns: auto auto auto;
   row-gap: 0;
-  width: 100%;
+  width: 90%;
   place-items: center;
   row-gap: 20px;
-  column-gap: 20px;
+  padding-left: 10px;
 }
-@media screen and (max-width: 945px) {
+@media screen and (max-width: 1000px) {
+  .allbook_container .book {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 900px) {
   .allbook_container .book {
     grid-template-columns: auto auto;
-    width: fit-content;
-    position: relative;
-    left: 50%;
-    transform: translate(-45%, 0);
   }
 }
-@media screen and (max-width: 622px) {
+@media screen and (max-width: 600px) {
   .allbook_container .book {
     grid-template-columns: auto;
-    padding-left: 80px;
-  }
-}
-@media screen and (max-width: 558px) {
-  .allbook_container .book {
-    width: fit-content;
-    transform: translate(-65%, 0);
   }
 }
 .allbook_container .book .book_container {
@@ -807,6 +802,11 @@ html, body, #root {
   height: 400px;
   background-color: whitesmoke;
   transition: 0.5s;
+}
+@media screen and (max-width: 1200px) {
+  .allbook_container .book .book_container {
+    width: 250px;
+  }
 }
 .allbook_container .book .book_container .book_title {
   width: 200px;
@@ -826,22 +826,8 @@ html, body, #root {
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
-.allbook_container .book .book_container:hover {
+.allbook_container .book .book_container:hover, .allbook_container .book .book_container:active {
   transform: translateY(-10px);
-}
-.allbook_container .pagination_container {
-  display: grid;
-  place-content: center;
-  width: 100%;
-  margin-top: 20px;
-  padding-left: 40px;
-}
-@media screen and (max-width: 570px) {
-  .allbook_container .pagination_container {
-    width: 80%;
-    padding-left: 52px;
-    height: 50px;
-  }
 }
 
 .bookdetail_contianer {
@@ -1058,10 +1044,6 @@ html, body, #root {
   width: 200px;
   height: 250px;
   object-fit: cover;
-}
-.student_modal .studentDetail_table .book_row .borrowed_book p {
-  width: 250px;
-  overflow-wrap: break-word;
 }
 
 .studentlist_container {

@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import "../../style/style.css";
-import { LoginType } from "../../types/user.type";
-import { ApiRequest } from "../../utilities/helper";
+import { LoginType, TokenType } from "../../types/user.type";
+import { ApiRequest, SetAuthTokenStorage } from "../../utilities/helper";
 import { useNavigate } from "react-router-dom";
 import { renderToStaticMarkup } from "react-dom/server";
 import ReactCodeInput from "react-code-input";
@@ -88,6 +88,8 @@ const Login = () => {
     }
 
     if (!reset) {
+      const token = request.data as TokenType;
+      SetAuthTokenStorage(token);
       navigate("/profile", { replace: true });
       window.location.reload();
     } else {

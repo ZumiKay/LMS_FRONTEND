@@ -714,7 +714,6 @@ html, body, #root {
     height: 100%;
     z-index: 1;
     color: black;
-    background-color: white;
     width: 83%;
     height: 100%;
     margin-top: 10px;
@@ -784,11 +783,8 @@ html, body, #root {
         text-align: left;
         border-bottom: 1px solid lightgray;
         width: 100%;
-        margin-left: 20px;
         border-left: 5px solid #0082c8;
         padding-left: 10px;
-
-
     }
 
     .popularbook_wrapper {
@@ -954,35 +950,27 @@ html, body, #root {
 .allbook_container {
     width: 100%;
     height: fit-content;
-    padding-left: 20px;
-
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    align-items: center;
     .book {
         display: grid;
         grid-template-columns: auto auto auto;
         row-gap: 0;
-        width: 100%;
-        place-items: center;
+        width: 90%;
+        place-items: center;     
         row-gap: 20px;
-        column-gap: 20px;
+        padding-left: 10px;
+        @media screen and (max-width: 1000px) {
+            width: 100%;
+        }
 
-        @media screen and (max-width: 945px) {
+        @media screen and (max-width: 900px) {
             grid-template-columns: auto auto;
-            width: fit-content;
-            position: relative;
-            left: 50%;
-            transform: translate(-45%, 0);
         }
-
-        @media screen and (max-width : 622px) {
+        @media screen and (max-width: 600px) {
             grid-template-columns: auto;
-            padding-left: 80px;
-
-        }
-
-        @media screen and (max-width: 558px) {
-            width: fit-content;
-            transform: translate(-65%, 0);
-
         }
 
         .book_container {
@@ -994,7 +982,9 @@ html, body, #root {
             width: 300px;
             height: 400px;
             background-color: whitesmoke;
-
+            @media screen and (max-width: 1200px) {
+                width: 250px;    
+            }
             .book_title {
                 width: 200px;
                 max-height: 60px;
@@ -1003,12 +993,10 @@ html, body, #root {
                 overflow: auto;
 
             }
-
             .detail {
                 font-weight: 400;
                 font-size: 13px;
             }
-
             .book_cover {
                 width: 200px;
                 height: 280px;
@@ -1019,29 +1007,12 @@ html, body, #root {
 
             transition: .5s;
 
-            &:hover {
+            &:hover,&:active {
                 transform: translateY(-10px);
             }
         }
 
     }
-
-
-    .pagination_container {
-        display: grid;
-        place-content: center;
-        width: 100%;
-        margin-top: 20px;
-        padding-left: 40px;
-
-        @media screen and (max-width: 570px) {
-            width: 80%;
-            padding-left: 52px;
-            height: 50px;
-        }
-
-    }
-
 }
 
 .bookdetail_contianer {

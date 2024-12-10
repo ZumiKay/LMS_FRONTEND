@@ -139,7 +139,7 @@ const BookDetailPage = () => {
             </Button>
           )
         ) : (
-          <Button className="min-w-[200px] w-[50%] bg-slate-500 text-white font-bold">
+          <Button className="w-full bg-slate-500 text-white font-bold">
             UNAVALIABLE
           </Button>
         )}

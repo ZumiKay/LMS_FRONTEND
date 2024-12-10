@@ -1,6 +1,6 @@
 import { BookType } from "../types/book.type";
 import { upload } from "@vercel/blob/client";
-import { ROLE } from "../types/user.type";
+import { ROLE, TokenType } from "../types/user.type";
 
 export function formatDateToMMDDYYYYHHMMSS(date: Date): string {
   const pad = (n: number) => (n < 10 ? "0" + n : n); // Padding single digits with leading zero
@@ -16,13 +16,24 @@ export function formatDateToMMDDYYYYHHMMSS(date: Date): string {
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
+export function SetAuthTokenStorage(token: TokenType) {
+  localStorage.setItem(
+    import.meta.env.VITE_ACCESSTOKEN_COOKIE,
+    token.AccessToken
+  );
+  localStorage.setItem(
+    import.meta.env.VITE_REFRESHTOKEN_COOKIE,
+    token.RefreshToken
+  );
+}
+
 export const ApiRequest = async ({
   url,
   method,
   data,
-  cookies,
+  cookies = false,
   refreshToken = true,
-  blob,
+  blob = false,
 }: {
   url: string;
   method: "POST" | "GET" | "PUT" | "DELETE";
@@ -38,43 +49,67 @@ export const ApiRequest = async ({
   message?: string;
   schooldata?: unknown;
   totalcount?: number;
+  incart?: boolean;
 }> => {
   try {
-    // Setup headers
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const AccessToken = localStorage.getItem("lms_accesstoken") ?? "";
+    const RefreshToken = localStorage.getItem("lms_refreshtoken") ?? "";
+
     const headers: HeadersInit = {
       "Content-Type": "application/json",
+      ...(cookies && AccessToken && { authorization: `Bearer ${AccessToken}` }),
     };
 
-    // Configure request options
-    const fetchOptions: RequestInit = {
+    const fetchOptions = {
       method,
       headers,
-      ...(method !== "GET" && { body: JSON.stringify(data) }),
-      ...(cookies && { credentials: "include" }),
+      ...(method !== "GET" && data ? { body: JSON.stringify(data) } : {}),
     };
 
-    // Make the request
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}${url}`,
-      fetchOptions
-    );
-
-    // Parse the response JSON
+    // Make the initial API request
+    const response = await fetch(`${apiUrl}${url}`, fetchOptions);
     const result = blob ? await response.blob() : await response.json();
 
-    // Check for response success
+    // Handle unsuccessful responses
     if (!response.ok) {
-      if (response.status === 401 && refreshToken) {
-        //refresh Token
-        const refreshtoken = await fetch(
-          `${import.meta.env.VITE_API_URL}/user/refreshtoken`,
-          { method: "GET", credentials: "include", headers }
-        );
-        if (!refreshtoken.ok) {
-          return { success: false };
+      // If unauthorized and refreshToken is enabled, attempt token refresh
+      if (response.status === 401 && refreshToken && RefreshToken) {
+        const refreshResponse = await fetch(`${apiUrl}/user/refreshtoken`, {
+          method: "POST", // Usually POST for token refresh
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: RefreshToken }),
+        });
+
+        if (refreshResponse.ok) {
+          const refreshData = await refreshResponse.json();
+          SetAuthTokenStorage(refreshData.data); // Update tokens
+          // Retry the original request with the new AccessToken
+          headers.authorization = `Bearer ${localStorage.getItem(
+            "lms_accesstoken"
+          )}`;
+          const retryResponse = await fetch(`${apiUrl}${url}`, {
+            ...fetchOptions,
+            headers,
+          });
+          const retryResult = blob
+            ? await retryResponse.blob()
+            : await retryResponse.json();
+
+          return retryResponse.ok
+            ? {
+                success: true,
+                ...(blob ? { data: retryResult } : { ...retryResult }),
+              }
+            : {
+                success: false,
+                message: retryResult?.message || "Retry failed",
+                error: retryResult,
+              };
         }
       }
 
+      // Return error for non-recoverable cases
       return {
         success: false,
         message: result?.message || "An error occurred",
@@ -89,7 +124,11 @@ export const ApiRequest = async ({
     };
   } catch (error) {
     console.error("Fetch Error:", error);
-    return { success: false, error };
+    return {
+      success: false,
+      error,
+      message: "Network error or server unavailable",
+    };
   }
 };
 

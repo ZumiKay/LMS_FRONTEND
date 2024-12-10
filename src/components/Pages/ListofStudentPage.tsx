@@ -91,7 +91,10 @@ const ListofStudentPage = () => {
               size="lg"
               className="max-w-lg font-bold"
               color="primary"
-              onClick={() => ctx.setopenmodal({ register: true })}
+              onClick={() => {
+                ctx.setopenmodal({ register: true });
+                ctx.setglobalindex(-1);
+              }}
             >
               Resgister
             </Button>

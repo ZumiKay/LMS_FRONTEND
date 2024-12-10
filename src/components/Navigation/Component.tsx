@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { forwardRef, useCallback, useState } from "react";
+import { forwardRef, useCallback, useEffect, useState } from "react";
 import { ROLE, UserType } from "../../types/user.type";
 import { MenuItemList } from "./Asset";
 import "../../style/style.css";
@@ -24,6 +24,14 @@ export const MenuItem = forwardRef((props: MenuItemType, ref) => {
       }),
     [props.user?.role]
   );
+
+  useEffect(() => {
+    document.body.style.overflowY = "hidden";
+
+    return () => {
+      document.body.style.overflowY = "auto";
+    };
+  }, []);
 
   return (
     <div

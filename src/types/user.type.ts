@@ -50,3 +50,8 @@ export interface LoginType {
   confirmpassword: string;
   code: string;
 }
+
+export interface TokenType {
+  AccessToken: string;
+  RefreshToken: string;
+}

@@ -23,7 +23,7 @@ const CheckRoleRoute = ({
     }
   }, [roles, user]);
 
-  return <>{children}</>;
+  return <>{user && children}</>;
 };
 
 export default CheckRoleRoute;
