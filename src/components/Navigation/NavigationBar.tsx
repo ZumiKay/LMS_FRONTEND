@@ -228,17 +228,18 @@ const NavigationBar = ({ user }: { user: UserType }) => {
         {user?.role === ROLE.STUDENT &&
           (location.pathname === "/" ||
             location.pathname.includes("/book")) && (
-            <i
-              onClick={() => navigate("/bucket")}
-              className={
-                ctx.added
-                  ? "fa-solid fa-cart-shopping bellanimated"
-                  : "fa-solid fa-cart-shopping"
-              }
-              id={"bell"}
+            <NavLink
+              to={"/bucket"}
+              className={"text-black hover:text-gray-300"}
             >
-              <span className={"cart-count"}>count</span>
-            </i>
+              <Badge content={ctx.cartcount} variant="solid" color="danger">
+                <FontAwesomeIcon
+                  icon={faCartShopping}
+                  fontSize={25}
+                  className="transition-transform hover:-translate-y-1 active:-translate-y-1"
+                />
+              </Badge>
+            </NavLink>
           )}
       </div>
     </div>

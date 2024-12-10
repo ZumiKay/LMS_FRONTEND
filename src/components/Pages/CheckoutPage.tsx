@@ -49,7 +49,9 @@ const CheckoutPage = () => {
       toast.error("Can't Checkout");
       return;
     }
+
     setborrowbook(checkoutreq.data as BorrowBookType);
+    setcartcount(0);
     setchecked(true);
   };
 
@@ -99,7 +101,7 @@ const CheckoutPage = () => {
   return (
     <>
       <AlertDialog onAgree={() => handleDeleteBuckets(id as string)} />
-      <div className="checkout_container">
+      <div className="checkout_container min-h-screen h-full">
         <h1 className="text-4xl font-black">BOOK BUCKET</h1>
 
         {!fetchloading && !bucketdata && (
