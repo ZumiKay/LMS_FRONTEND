@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "../../style/style.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -13,7 +13,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import Selection from "../Selection";
-import { Button, CircularProgress, Pagination } from "@nextui-org/react";
+import { Button, Pagination, Skeleton } from "@nextui-org/react";
 import PageLoading, { SliderLoading } from "../../Loading";
 //
 
@@ -57,6 +57,7 @@ const Home = () => {
     const getPopularBook = async () => {
       const url = (type: string, limit?: number) =>
         `/getallbook?type=filter&${type}=true${limit ? `&limit=${limit}` : ""}`;
+      setloading(true);
       const popular = await ApiRequest({
         url: url("popular", 10),
         method: "GET",
@@ -66,15 +67,13 @@ const Home = () => {
         url: url("latest", 10),
         method: "GET",
       });
-
-      setloading(true);
       const allpromise = await Promise.all([popular, latest]);
-      setloading(false);
 
       if (Object.values(allpromise).every((i) => i.success)) {
         setpopularbook(allpromise[0].data as Array<BookType>);
         setlatestbook(allpromise[1].data as Array<BookType>);
       }
+      setloading(false);
     };
 
     getPopularBook();
@@ -97,6 +96,18 @@ const Home = () => {
     window.addEventListener("resize", handleresize);
     return () => window.removeEventListener("resize", handleresize);
   }, []);
+
+  const PopularLoadingSkeleton = useCallback(() => {
+    return (
+      loading && (
+        <>
+          <Skeleton className="popularbook_container" />
+          <Skeleton className="popularbook_container" />
+        </>
+      )
+    );
+  }, [loading]);
+
   return (
     <div className="w-full h-full">
       {loading && <PageLoading />}
@@ -124,7 +135,7 @@ const Home = () => {
           <div className="section_title">Latest Books</div>
         </div>
         <div className="popularbook_wrapper">
-          {loading && <CircularProgress />}
+          <PopularLoadingSkeleton />
           {latestbook?.map((latest, idx) => (
             <Popularbook {...latest} key={idx} />
           ))}
@@ -133,7 +144,7 @@ const Home = () => {
           <div className="section_title">Popular Books</div>
         </div>
         <div className="popularbook_wrapper">
-          {loading && <CircularProgress />}
+          <PopularLoadingSkeleton />
           {popularbook?.map((popular, idx) => (
             <Popularbook {...popular} key={idx} />
           ))}
@@ -219,6 +230,7 @@ const AllbookContainer = () => {
   );
 
   const [books, setbooks] = useState<BookType[]>();
+  const [loading, setloading] = useState(false);
   const [count, setcount] = useState(0);
   const navigate = useNavigate();
   const handleChange = (page: number) => {
@@ -234,10 +246,12 @@ const AllbookContainer = () => {
   //Fetch All Book
   useEffect(() => {
     const getBook = async () => {
+      setloading(true);
       const response = await ApiRequest({
         url: `/getallbook?limit=${currentShowPerPage}&page=${currentPage}&type=all`,
         method: "GET",
       });
+      setloading(false);
       if (response.success) {
         setbooks(response.data as BookType[]);
         setcount(response.totalcount as number);
@@ -250,6 +264,13 @@ const AllbookContainer = () => {
   return (
     <div className="allbook_container">
       <div className="book">
+        {loading && (
+          <>
+            <Skeleton className="w-[280px] h-[400px]"></Skeleton>
+            <Skeleton className="w-[280px] h-[400px]"></Skeleton>
+            <Skeleton className="w-[280px] h-[400px]"></Skeleton>
+          </>
+        )}
         {books?.map((i) => (
           <div key={i.id} className="book_container">
             <img
