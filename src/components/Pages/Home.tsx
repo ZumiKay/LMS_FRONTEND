@@ -181,16 +181,18 @@ const SliderContainer = ({
   book: BookType[];
   type: string;
 }) => {
-  const { setsearch } = useGlobalContext();
+  const { setsearch, setfilter_cat } = useGlobalContext();
   const navigate = useNavigate();
 
   return (
     <div className="slider_container">
       <Button
-        onClick={() => setsearch("")}
-        className="cursor-pointer font-bold"
+        onClick={() => {
+          setsearch("");
+          setfilter_cat("");
+        }}
+        className="cursor-pointer font-bold bg-red-400 max-w-sm"
         size="sm"
-        color="danger"
       >
         Clear
       </Button>
